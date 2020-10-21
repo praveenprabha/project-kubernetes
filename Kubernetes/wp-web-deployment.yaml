@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wpweb-deployment
+spec:
+  replicas: 3 # tells deployment to run 3 pods matching the template
+  selector:
+    matchLabels:
+      app: wpweb-deploy-app
+  template:
+    metadata:
+      labels:
+        app: wpweb-deploy-app
+    spec:
+      containers:
+      - name: wpweb-deploy-pod
+        image: wordpress
+        ports:
+        - containerPort: 80
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wpdb-service
+        - name: WORDPRESS_DB_NAME
+          value: wpdb
+        - name: WORDPRESS_DB_USER
+          value: wpuser
+        - name: WORDPRESS_DB_PASSWORD
+          value: wppass_789
