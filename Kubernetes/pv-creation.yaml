@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: my-local-pv
+  name: local-pv-node01
 spec:
   capacity:
     storage: 2Gi
@@ -20,3 +20,53 @@ spec:
           operator: In
           values:
           - kube-node-01
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-node02
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  storageClassName: local-storage-class
+  local:
+    path: /mnt/pv
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-node-02
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-node03
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  storageClassName: local-storage-class
+  local:
+    path: /mnt/pv
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-node-03
