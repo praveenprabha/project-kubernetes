@@ -8,14 +8,16 @@
 
 #### DB_PASSWORD : Stores the password of database user who will be connecting to fetch the data from appropirate database. 
 
+#### MEMCAHED_HOST: Specify the memcached host IP address.
 
 ### Example values
 - DB_NAME=wpdb
 - DB_USER=wpuser
 - DB_PASSWORD=wppass@1234
 - DB_HOST=172.17.0.2
+- MEMCAHED_HOST=172.17.0.4
 
 ### Example Docker Run Command
 ```sh
-$ docker run -d --name my_wp -p 8080:80 -e DB_NAME=wpdb -e DB_USER=wpuser -e DB_PASSWORD=wppass@1234 -e DB_HOST=172.17.0.2  my_wordpress:v1
+$ docker run -d --name my_wp -p 8080:80 -e DB_NAME=wpdb -e DB_USER=wpuser -e DB_PASSWORD=wppass@1234 -e DB_HOST=172.17.0.2  -e MEMCAHED_HOST=172.17.0.4 my_wordpress:v1
 ```
