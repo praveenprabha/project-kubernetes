@@ -1,0 +1,53 @@
+FROM wordpress
+
+LABEL maintainer='Praveen P <praveentechstuff.prabha@gmail.com>'
+
+#ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /var/www/html 
+
+
+
+#RUN apt-get update && apt-get install -y \
+#		apache2 \
+#		libapache2-mod-php \
+#		php-mysql  \
+#		php-memcached \
+#		wget \
+#	&& rm -rf /var/lib/apt/lists/*
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+#RUN rm /var/www/html/index.html
+#RUN rm -rf /var/www/html
+
+#RUN wget https://wordpress.org/latest.tar.gz -O /var/www/latest.tar.gz \
+#	&& cd /var/www/ \
+#	&& rm -rf /var/www/html \
+#	&& tar -zxf latest.tar.gz -C /var/www/ \
+#	&& mv wordpress html
+	
+#COPY wordpress /var/www/html
+
+#From https://github.com/bonny/memcachy
+ADD object-cache-memcache.php /var/www/html/wp-content/.
+ADD object-cache-memcached.php /var/www/html/wp-content/.
+ADD object-cache.php /var/www/html/wp-content/.
+
+
+# From https://downloads.wordpress.org/plugin/batcache.1.5.zip
+ADD batcache/advanced-cache.php /var/www/html/wp-content/.
+ADD batcache/batcache.php /var/www/html/wp-content/plugins/.
+
+COPY entrypoint.sh /usr/local/bin/
+
+RUN ln -s /usr/local/bin/entrypoint.sh /
+
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
+#RUN sh /var/www/html/.entrypoint.sh
+
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
+#CMD ["docker-entrypoint.sh apache2-foreground ; entrypoint.sh"]
+#ENTRYPOINT ["entrypoint.sh"]

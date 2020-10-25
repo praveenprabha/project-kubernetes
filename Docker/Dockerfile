@@ -1,27 +1,58 @@
 FROM ubuntu:18.04
 
+LABEL maintainer='Praveen P <praveentechstuff.prabha@gmail.com>'
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get  install -y apache2 libapache2-mod-php php-mysql  php-memcached
+RUN apt-get update && apt-get install -y \
+		apache2 \
+		libapache2-mod-php \
+		php-mysql  \
+		php-memcached \
+		wget \
+		unzip \
+	&& rm -rf /var/lib/apt/lists/*
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-RUN rm /var/www/html/index.html
+#RUN rm /var/www/html/index.html
+#RUN rm -rf /var/www/html
 
-COPY wordpress /var/www/html
+RUN wget https://wordpress.org/latest.tar.gz -O /var/www/latest.tar.gz \
+	&& cd /var/www/ \
+	&& rm -rf /var/www/html \
+	&& tar -zxf latest.tar.gz -C /var/www/ \
+	&& mv wordpress html \
+	&& rm -rf /var/www/latest.tar.gz
+	
+#COPY wordpress /var/www/html
 
-#From https://github.com/bonny/memcachy
-COPY object-cache-memcache.php /var/www/html/wp-content/.
-COPY object-cache-memcached.php /var/www/html/wp-content/.
-COPY object-cache.php /var/www/html/wp-content/.
+##From https://github.com/bonny/memcachy
+#COPY object-cache-memcache.php /var/www/html/wp-content/.
+#COPY object-cache-memcached.php /var/www/html/wp-content/.
+#COPY object-cache.php /var/www/html/wp-content/.
+COPY object-cache*.php /var/www/html/wp-content/
+
+#ADD https://github.com/bonny/memcachy/blob/master/object-cache.php https://github.com/bonny/memcachy/blob/master/object-cache-memcached.php https://github.com/bonny/memcachy/blob/master/object-cache-memcache.php /var/www/html/wp-content/
 
 
-# From https://downloads.wordpress.org/plugin/batcache.1.5.zip
-COPY batcache/advanced-cache.php /var/www/html/wp-content/.
-COPY batcache/batcache.php /var/www/html/wp-content/plugins/.
+## From https://downloads.wordpress.org/plugin/batcache.1.5.zip
+#COPY batcache/advanced-cache.php /var/www/html/wp-content/.
+#COPY batcache/batcache.php /var/www/html/wp-content/plugins/.
 
-COPY entrypoint.sh /entrypoint.sh
+RUN wget https://downloads.wordpress.org/plugin/batcache.1.5.zip -O /var/www/html/wp-content/batcache.1.5.zip  \
+	&& cd /var/www/html/wp-content/  \
+	&& unzip batcache.1.5.zip \
+	&& cp batcache/advanced-cache.php /var/www/html/wp-content/. \
+	&& cp batcache/batcache.php /var/www/html/wp-content/plugins/. \
+	&& rm -rf /var/www/html/wp-content/batcache.1.5.zip \
+	&& rm -rf /var/www/html/wp-content/batcache
 
-RUN chmod 755 /entrypoint.sh
 
-CMD ["./entrypoint.sh"]
+COPY entrypoint.sh /usr/local/bin/
+
+RUN ln -s /usr/local/bin/entrypoint.sh /
+
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
+CMD ["entrypoint.sh"]
