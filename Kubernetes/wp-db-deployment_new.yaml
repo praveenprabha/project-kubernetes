@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wpdb-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wpdb-deploy-app
+  template:
+    metadata:
+      labels:
+        app: wpdb-deploy-app
+    spec:
+      volumes:
+      - name: wpdb-persistent-storage
+        persistentVolumeClaim:
+          claimName: wpdb-pvc-1gb
+      containers:
+        - name: wpdb-deploy-pod
+          image: mysql:5.7
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: wpdb-persistent-storage
+              subPath: mysqlDataDir
+          ports:
+            - containerPort: 3306 
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: mysql_pass_789
+            - name: MYSQL_DATABASE
+              value: wpdb
+            - name: MYSQL_USER
+              value: wpuser
+            - name: MYSQL_PASSWORD
+              value: wppass_789
