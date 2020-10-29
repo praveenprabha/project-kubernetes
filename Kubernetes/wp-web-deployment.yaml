@@ -14,15 +14,17 @@ spec:
     spec:
       containers:
       - name: wpweb-deploy-pod
-        image: wordpress
+        image: praveenprabha/my_wordpress:v2
         ports:
         - containerPort: 80
         env:
-        - name: WORDPRESS_DB_HOST
-          value: wpdb-service
-        - name: WORDPRESS_DB_NAME
+        - name: DB_HOST
+          value: 192.168.10.106
+        - name: DB_NAME
           value: wpdb
-        - name: WORDPRESS_DB_USER
+        - name: DB_USER
           value: wpuser
-        - name: WORDPRESS_DB_PASSWORD
+        - name: DB_PASSWORD
           value: wppass_789
+        - name: MEMCAHED_HOST
+          value: 192.168.49.240

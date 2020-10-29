@@ -52,7 +52,8 @@ spec:
           ordinal=${BASH_REMATCH[1]}
           [[ $ordinal -eq 0 ]] && exit 0
           # Clone data from previous peer.
-          ncat -i 10 --recv-only mysql-$(($ordinal-1)).mysql.default.svc.cluster.local 3307 | xbstream -x -C /var/lib/mysql
+          # exec part of ths ncat command was added to solve the issue of waiting to connect
+          exec ncat --recv-only mysql-$(($ordinal-1)).mysql 3307 | xbstream -x -C /var/lib/mysql
           # Prepare the backup.
           xtrabackup --prepare --target-dir=/var/lib/mysql
         volumeMounts:
@@ -128,7 +129,7 @@ spec:
             echo "Initializing replication from clone position"
             mysql -h 127.0.0.1 \
                   -e "$(<change_master_to.sql.in), \
-                          MASTER_HOST='mysql-0.mysql.default.svc.cluster.local', \
+                          MASTER_HOST='mysql-0.mysql', \
                           MASTER_USER='root', \
                           MASTER_PASSWORD='', \
                           MASTER_CONNECT_RETRY=10; \

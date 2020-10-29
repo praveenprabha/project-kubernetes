@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-memcached-deployment
+spec:
+  #replicas: 3 # tells deployment to run 3 pods matching the template
+  selector:
+    matchLabels:
+      app: wp-memcached-deploy-app
+  template:
+    metadata:
+      labels:
+        app: wp-memcached-deploy-app
+    spec:
+      containers:
+      - name: wp-memcached-deploy-pod
+        image: memcached
+        ports:
+        - containerPort: 11211
