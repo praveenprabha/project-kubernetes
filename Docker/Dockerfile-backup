@@ -2,23 +2,18 @@ FROM ubuntu:18.04
 
 LABEL maintainer='Praveen P <praveentechstuff.prabha@gmail.com>'
 
-#ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update &&  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update && apt-get install -y \
 		apache2 \
 		libapache2-mod-php \
 		php-mysql  \
 		php-memcached \
 		wget \
-		unzip
-#	&& rm -rf /var/lib/apt/lists/*
+		unzip \
+	&& rm -rf /var/lib/apt/lists/*
 
-
-#RUN a2enmod rewrite
-#RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-EXPOSE 80
-
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 #RUN rm /var/www/html/index.html
 #RUN rm -rf /var/www/html
